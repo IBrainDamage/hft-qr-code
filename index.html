@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HFT Matrix-Carved QR Studio</title>
+    <title>HFT Silhouette QR Studio</title>
     <!-- Reliable Offline QR Encoder -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <style>
@@ -36,14 +36,14 @@
         .canvas-container {
             display: inline-block;
             background: #ffffff;
-            padding: 8px;
+            padding: 12px;
             border-radius: 8px;
             border: 1px solid #cbd5e1;
         }
         canvas {
             display: block;
-            width: 220px;
-            height: 220px;
+            max-width: 260px;
+            height: auto;
             border-radius: 4px;
         }
         
@@ -55,11 +55,10 @@
 
     <div class="container">
         <div class="header">
-            <h1>HFT Credential QR Studio</h1>
-            <p>Matrix-Carved Letter Generator</p>
+            <h1>HFT Silhouette QR Studio</h1>
+            <p>Letter-Shaped Credential Generator</p>
         </div>
 
-        <!-- TAB SWITCHER -->
         <div class="tab-bar">
             <button type="button" id="btn3" class="tab-btn active" onclick="switchMode(3)">3-Subject (Store/User/Pass)</button>
             <button type="button" id="btn2" class="tab-btn" onclick="switchMode(2)">2-Subject (User/Pass)</button>
@@ -88,12 +87,12 @@
 
             <div class="card" style="text-align: center;">
                 <div class="qr-wrapper">
-                    <div id="ph3" class="qr-placeholder">Enter credentials above to carve HFT matrix</div>
+                    <div id="ph3" class="qr-placeholder">Enter credentials above to generate HFT silhouette QR</div>
                     <div id="box3" class="canvas-container" style="display: none;">
-                        <canvas id="canvas3" width="280" height="280"></canvas>
+                        <canvas id="canvas3"></canvas>
                     </div>
                 </div>
-                <button type="button" id="btnDl3" class="action-btn" disabled onclick="downloadCanvas('canvas3', 'HFT_3Subject_Carved.png')">Download 3-Subject QR</button>
+                <button type="button" id="btnDl3" class="action-btn" disabled onclick="downloadCanvas('canvas3', 'HFT_3Subject_Silhouette.png')">Download HFT Silhouette QR</button>
             </div>
         </div>
 
@@ -116,12 +115,12 @@
 
             <div class="card" style="text-align: center;">
                 <div class="qr-wrapper">
-                    <div id="ph2" class="qr-placeholder">Enter credentials above to carve HFT matrix</div>
+                    <div id="ph2" class="qr-placeholder">Enter credentials above to generate HFT silhouette QR</div>
                     <div id="box2" class="canvas-container" style="display: none;">
-                        <canvas id="canvas2" width="280" height="280"></canvas>
+                        <canvas id="canvas2"></canvas>
                     </div>
                 </div>
-                <button type="button" id="btnDl2" class="action-btn" disabled onclick="downloadCanvas('canvas2', 'HFT_2Subject_Carved.png')">Download 2-Subject QR</button>
+                <button type="button" id="btnDl2" class="action-btn" disabled onclick="downloadCanvas('canvas2', 'HFT_2Subject_Silhouette.png')">Download HFT Silhouette QR</button>
             </div>
         </div>
     </div>
@@ -138,17 +137,17 @@
                 sec2.style.display = 'none';
                 btn3.classList.add('active');
                 btn2.classList.remove('active');
-                renderCarvedQR(3);
+                renderSilhouetteQR(3);
             } else {
                 sec3.style.display = 'none';
                 sec2.style.display = 'block';
                 btn3.classList.remove('active');
                 btn2.classList.add('active');
-                renderCarvedQR(2);
+                renderSilhouetteQR(2);
             }
         }
 
-        function renderCarvedQR(mode) {
+        function renderSilhouetteQR(mode) {
             const ph = document.getElementById(mode === 3 ? 'ph3' : 'ph2');
             const box = document.getElementById(mode === 3 ? 'box3' : 'box2');
             const targetCanvas = document.getElementById(mode === 3 ? 'canvas3' : 'canvas2');
@@ -179,65 +178,111 @@
             }
 
             try {
-                targetCanvas.width = 280;
-                targetCanvas.height = 280;
+                const size = 320;
 
-                // 1. Generate base QR code with High Error Correction
+                // 1. Generate full square base QR on an offscreen canvas
+                let tempCanvas = document.createElement('canvas');
+                tempCanvas.width = size;
+                tempCanvas.height = size;
+                
                 const qr = new QRious({
-                    element: targetCanvas,
+                    element: tempCanvas,
                     value: payload,
-                    size: 280,
-                    level: 'H',
+                    size: size,
+                    level: 'H', // High error correction so scanner reads through text clipping
                     foreground: '#0f172a',
                     background: '#ffffff'
                 });
 
-                const ctx = targetCanvas.getContext('2d', { willReadFrequently: true });
-                let imgData = ctx.getImageData(0, 0, 280, 280);
-                let pixels = imgData.data;
+                let tCtx = tempCanvas.getContext('2d', { willReadFrequently: true });
+                let qrData = tCtx.getImageData(0, 0, size, size);
 
-                // 2. Create offscreen mask for "HFT" letters
+                // 2. Create the HFT letter mask canvas
                 let maskCanvas = document.createElement('canvas');
-                maskCanvas.width = 280;
-                maskCanvas.height = 280;
+                maskCanvas.width = size;
+                maskCanvas.height = size;
                 let mCtx = maskCanvas.getContext('2d');
                 
-                mCtx.fillStyle = '#000000';
-                mCtx.fillRect(0, 0, 280, 280);
+                mCtx.fillStyle = '#000000'; // Background of mask
+                mCtx.fillRect(0, 0, size, size);
                 
+                // Draw bold "HFT" in the center to form the silhouette shape
                 mCtx.fillStyle = '#ffffff';
-                mCtx.font = '900 95px sans-serif';
+                mCtx.font = '900 110px sans-serif';
                 mCtx.textAlign = 'center';
                 mCtx.textBaseline = 'middle';
-                mCtx.fillText('HFT', 280 / 2, 280 / 2);
+                mCtx.fillText('HFT', size / 2, size / 2);
 
-                let maskData = mCtx.getImageData(0, 0, 280, 280).data;
+                let maskData = mCtx.getImageData(0, 0, size, size).data;
 
-                // 3. Carve pixels into HFT pattern
-                for (let i = 0; i < pixels.length; i += 4) {
+                // 3. Filter pixels: Keep only pixels inside the "HFT" text shapes
+                let finalPixels = tCtx.createImageData(size, size);
+                let fPx = finalPixels.data;
+
+                for (let i = 0; i < qrData.data.length; i += 4) {
+                    // If pixel is part of the HFT letter mask
                     if (maskData[i] > 128) {
-                        let x = (i / 4) % 280;
-                        let y = Math.floor((i / 4) / 280);
+                        let x = (i / 4) % size;
+                        let y = Math.floor((i / 4) / size);
                         
-                        if ((x % 6 < 4) && (y % 6 < 4)) {
-                            pixels[i] = 15;     // R
-                            pixels[i+1] = 23;   // G
-                            pixels[i+2] = 42;   // B
+                        // Render scannable dot texture pattern inside the letters
+                        if ((x % 5 < 3) && (y % 5 < 3)) {
+                            fPx[i]     = qrData.data[i];     // R
+                            fPx[i + 1] = qrData.data[i + 1]; // G
+                            fPx[i + 2] = qrData.data[i + 2]; // B
+                            fPx[i + 3] = 255;                // Opaque
                         } else {
-                            pixels[i] = 255;
-                            pixels[i+1] = 255;
-                            pixels[i+2] = 255;
+                            fPx[i + 3] = 0;                  // Transparent grid gap
+                        }
+                    } else {
+                        fPx[i + 3] = 0;                      // Transparent outside letters
+                    }
+                }
+
+                // Put masked pixels onto temporary canvas
+                tCtx.putImageData(finalPixels, 0, 0);
+
+                // 4. Crop canvas automatically to the exact bounding box of the letters "HFT"
+                let currentPixels = tCtx.getImageData(0, 0, size, size);
+                let pData = currentPixels.data;
+                let minX = size, minY = size, maxX = 0, maxY = 0;
+
+                for (let y = 0; y < size; y++) {
+                    for (let x = 0; x < size; x++) {
+                        let alpha = pData[((y * size) + x) * 4 + 3];
+                        if (alpha > 0) {
+                            if (x < minX) minX = x;
+                            if (x > maxX) maxX = x;
+                            if (y < minY) minY = y;
+                            if (y > maxY) maxY = y;
                         }
                     }
                 }
 
-                ctx.putImageData(imgData, 0, 0);
+                // Add padding around silhouette
+                let pad = 12;
+                minX = Math.max(0, minX - pad);
+                minY = Math.max(0, minY - pad);
+                maxX = Math.min(size, maxX + pad);
+                maxY = Math.min(size, maxY + pad);
+
+                let cropWidth = maxX - minX;
+                let cropHeight = maxY - minY;
+
+                targetCanvas.width = cropWidth;
+                targetCanvas.height = cropHeight;
+                let targetCtx = targetCanvas.getContext('2d');
+
+                // Draw solid white background behind the HFT silhouette so scanners can read contrast
+                targetCtx.fillStyle = '#ffffff';
+                targetCtx.fillRect(0, 0, cropWidth, cropHeight);
+                targetCtx.drawImage(tempCanvas, minX, minY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
 
                 ph.style.display = 'none';
                 box.style.display = 'inline-block';
                 dlBtn.disabled = false;
             } catch (err) {
-                console.error("QR Carving error:", err);
+                console.error("Silhouette QR generation error:", err);
             }
         }
 
@@ -246,11 +291,11 @@
                 document.getElementById('g3Store').value = '';
                 document.getElementById('g3User').value = '';
                 document.getElementById('g3Pass').value = '';
-                renderCarvedQR(3);
+                renderSilhouetteQR(3);
             } else {
                 document.getElementById('g2User').value = '';
                 document.getElementById('g2Pass').value = '';
-                renderCarvedQR(2);
+                renderSilhouetteQR(2);
             }
         }
 
@@ -264,10 +309,10 @@
 
         // Live input listeners for both tabs
         ['g3Store', 'g3User', 'g3Pass'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => renderCarvedQR(3));
+            document.getElementById(id).addEventListener('input', () => renderSilhouetteQR(3));
         });
         ['g2User', 'g2Pass'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => renderCarvedQR(2));
+            document.getElementById(id).addEventListener('input', () => renderSilhouetteQR(2));
         });
     </script>
 </body>
