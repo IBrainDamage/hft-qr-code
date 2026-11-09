@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harbor Freight Credential QR Studio</title>
+    <title>HFT Credential QR Studio</title>
     <!-- Reliable Offline QR Encoder -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <style>
@@ -11,20 +12,20 @@
         body { background-color: #f1f5f9; color: #0f172a; padding: 16px; }
         .container { max-width: 480px; margin: 0 auto; }
         
-        .header { background: #cc2027; color: white; padding: 16px; border-radius: 12px; margin-bottom: 16px; text-align: center; }
-        .header h1 { font-size: 18px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
-        .header p { font-size: 12px; color: #fecaca; margin-top: 2px; }
+        .header { background: #0f172a; color: white; padding: 16px; border-radius: 12px; margin-bottom: 16px; text-align: center; }
+        .header h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+        .header p { font-size: 12px; color: #94a3b8; margin-top: 2px; }
 
         .tab-bar { display: flex; background: #e2e8f0; border-radius: 10px; padding: 4px; margin-bottom: 16px; }
         .tab-btn { flex: 1; padding: 12px 8px; text-align: center; border: none; background: transparent; font-weight: 700; cursor: pointer; border-radius: 8px; color: #64748b; font-size: 13px; transition: all 0.15s ease; }
-        .tab-btn.active { background: #ffffff; color: #cc2027; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .tab-btn.active { background: #ffffff; color: #2563eb; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
         .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
         
         .field { margin-bottom: 14px; }
         .field label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #475569; margin-bottom: 4px; }
         .field input { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; }
-        .field input:focus { border-color: #cc2027; }
+        .field input:focus { border-color: #2563eb; }
 
         .info-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 11px; color: #64748b; }
         .clear-btn { background: none; border: none; color: #ef4444; font-size: 12px; font-weight: 600; cursor: pointer; }
@@ -35,19 +36,19 @@
         .canvas-container {
             display: inline-block;
             background: #ffffff;
-            padding: 16px;
+            padding: 8px;
             border-radius: 8px;
             border: 1px solid #cbd5e1;
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
         canvas {
             display: block;
-            max-width: 300px;
-            height: auto;
+            width: 260px;
+            height: 260px;
             border-radius: 4px;
         }
         
-        .action-btn { width: 100%; padding: 12px; background: #cc2027; color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; }
+        .action-btn { width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; }
         .action-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
     </style>
 </head>
@@ -55,8 +56,8 @@
 
     <div class="container">
         <div class="header">
-            <h1>Harbor Freight QR Studio</h1>
-            <p>Stacked Logo Matrix Carved Generator</p>
+            <h1>HFT Credential QR Studio</h1>
+            <p>Standard QR with Centered HFT Badge</p>
         </div>
 
         <div class="tab-bar">
@@ -87,12 +88,12 @@
 
             <div class="card" style="text-align: center;">
                 <div class="qr-wrapper">
-                    <div id="ph3" class="qr-placeholder">Enter credentials above to generate Harbor Freight QR</div>
+                    <div id="ph3" class="qr-placeholder">Enter credentials above to generate QR code</div>
                     <div id="box3" class="canvas-container" style="display: none;">
-                        <canvas id="canvas3"></canvas>
+                        <canvas id="canvas3" width="280" height="280"></canvas>
                     </div>
                 </div>
-                <button type="button" id="btnDl3" class="action-btn" disabled onclick="downloadCanvas('canvas3', 'HarborFreight_3Subject_QR.png')">Download 3-Subject QR</button>
+                <button type="button" id="btnDl3" class="action-btn" disabled onclick="downloadCanvas('canvas3', 'HFT_3Subject_QR.png')">Download 3-Subject QR</button>
             </div>
         </div>
 
@@ -115,12 +116,12 @@
 
             <div class="card" style="text-align: center;">
                 <div class="qr-wrapper">
-                    <div id="ph2" class="qr-placeholder">Enter credentials above to generate Harbor Freight QR</div>
+                    <div id="ph2" class="qr-placeholder">Enter credentials above to generate QR code</div>
                     <div id="box2" class="canvas-container" style="display: none;">
-                        <canvas id="canvas2"></canvas>
+                        <canvas id="canvas2" width="280" height="280"></canvas>
                     </div>
                 </div>
-                <button type="button" id="btnDl2" class="action-btn" disabled onclick="downloadCanvas('canvas2', 'HarborFreight_2Subject_QR.png')">Download 2-Subject QR</button>
+                <button type="button" id="btnDl2" class="action-btn" disabled onclick="downloadCanvas('canvas2', 'HFT_2Subject_QR.png')">Download 2-Subject QR</button>
             </div>
         </div>
     </div>
@@ -137,17 +138,17 @@
                 sec2.style.display = 'none';
                 btn3.classList.add('active');
                 btn2.classList.remove('active');
-                renderHarborQR(3);
+                renderQR(3);
             } else {
                 sec3.style.display = 'none';
                 sec2.style.display = 'block';
                 btn3.classList.remove('active');
                 btn2.classList.add('active');
-                renderHarborQR(2);
+                renderQR(2);
             }
         }
 
-        function renderHarborQR(mode) {
+        function renderQR(mode) {
             const ph = document.getElementById(mode === 3 ? 'ph3' : 'ph2');
             const box = document.getElementById(mode === 3 ? 'box3' : 'box2');
             const targetCanvas = document.getElementById(mode === 3 ? 'canvas3' : 'canvas2');
@@ -178,101 +179,47 @@
             }
 
             try {
-                const size = 380;
+                const size = 280;
+                targetCanvas.width = size;
+                targetCanvas.height = size;
 
-                // 1. Generate full square base QR with red theme (#CC2027)
-                let tempCanvas = document.createElement('canvas');
-                tempCanvas.width = size;
-                tempCanvas.height = size;
-                
+                // 1. Generate standard square QR code with Level 'H' error correction
                 const qr = new QRious({
-                    element: tempCanvas,
+                    element: targetCanvas,
                     value: payload,
                     size: size,
                     level: 'H',
-                    foreground: '#cc2027',
+                    foreground: '#0f172a',
                     background: '#ffffff'
                 });
 
-                let tCtx = tempCanvas.getContext('2d', { willReadFrequently: true });
-                let qrData = tCtx.getImageData(0, 0, size, size);
+                const ctx = targetCanvas.getContext('2d');
 
-                // 2. Build stacked 2-line "HARBOR FREIGHT" mask
-                let maskCanvas = document.createElement('canvas');
-                maskCanvas.width = size;
-                maskCanvas.height = size;
-                let mCtx = maskCanvas.getContext('2d');
-                
-                mCtx.fillStyle = '#000000';
-                mCtx.fillRect(0, 0, size, size);
-                
-                mCtx.fillStyle = '#ffffff';
-                mCtx.font = '900 48px Impact, "Arial Black", sans-serif';
-                mCtx.textAlign = 'center';
-                mCtx.textBaseline = 'middle';
-                
-                // Draw stacked words matching logo layout
-                mCtx.fillText('HARBOR', size / 2, (size / 2) - 28);[cite: 3]
-                mCtx.fillText('FREIGHT', size / 2, (size / 2) + 28);[cite: 3]
+                // 2. Draw a clean white backing box in the center
+                const boxSize = 72;
+                const boxX = (size - boxSize) / 2;
+                const boxY = (size - boxSize) / 2;
 
-                let maskData = mCtx.getImageData(0, 0, size, size).data;
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(boxX - 4, boxY - 4, boxSize + 8, boxSize + 8);
 
-                // 3. Mask QR matrix pixels into letter shapes
-                let finalPixels = tCtx.createImageData(size, size);
-                let fPx = finalPixels.data;
+                // Optional: subtle border around the center badge
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(boxX - 4, boxY - 4, boxSize + 8, boxSize + 8);
 
-                for (let i = 0; i < qrData.data.length; i += 4) {
-                    if (maskData[i] > 128) {
-                        fPx[i]     = qrData.data[i];     // R
-                        fPx[i + 1] = qrData.data[i + 1]; // G
-                        fPx[i + 2] = qrData.data[i + 2]; // B
-                        fPx[i + 3] = qrData.data[i + 3]; // Alpha
-                    } else {
-                        fPx[i + 3] = 0;                  // Transparent outside letters
-                    }
-                }
-
-                tCtx.putImageData(finalPixels, 0, 0);
-
-                // 4. Auto-crop tightly around letter bounding box
-                let currentPixels = tCtx.getImageData(0, 0, size, size);
-                let pData = currentPixels.data;
-                let minX = size, minY = size, maxX = 0, maxY = 0;
-
-                for (let y = 0; y < size; y++) {
-                    for (let x = 0; x < size; x++) {
-                        let alpha = pData[((y * size) + x) * 4 + 3];
-                        if (alpha > 10) {
-                            if (x < minX) minX = x;
-                            if (x > maxX) maxX = x;
-                            if (y < minY) minY = y;
-                            if (y > maxY) maxY = y;
-                        }
-                    }
-                }
-
-                let pad = 12;
-                minX = Math.max(0, minX - pad);
-                minY = Math.max(0, minY - pad);
-                maxX = Math.min(size, maxX + pad);
-                maxY = Math.min(size, maxY + pad);
-
-                let cropWidth = maxX - minX;
-                let cropHeight = maxY - minY;
-
-                targetCanvas.width = cropWidth;
-                targetCanvas.height = cropHeight;
-                let targetCtx = targetCanvas.getContext('2d');
-
-                targetCtx.fillStyle = '#ffffff';
-                targetCtx.fillRect(0, 0, cropWidth, cropHeight);
-                targetCtx.drawImage(tempCanvas, minX, minY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+                // 3. Render "HFT" text inside the center badge
+                ctx.fillStyle = '#0f172a';
+                ctx.font = '900 24px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('HFT', size / 2, size / 2);
 
                 ph.style.display = 'none';
                 box.style.display = 'inline-block';
                 dlBtn.disabled = false;
             } catch (err) {
-                console.error("Harbor Freight QR rendering error:", err);
+                console.error("QR generation error:", err);
             }
         }
 
@@ -281,11 +228,11 @@
                 document.getElementById('g3Store').value = '';
                 document.getElementById('g3User').value = '';
                 document.getElementById('g3Pass').value = '';
-                renderHarborQR(3);
+                renderQR(3);
             } else {
                 document.getElementById('g2User').value = '';
                 document.getElementById('g2Pass').value = '';
-                renderHarborQR(2);
+                renderQR(2);
             }
         }
 
@@ -299,10 +246,10 @@
 
         // Live input listeners for both tabs
         ['g3Store', 'g3User', 'g3Pass'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => renderHarborQR(3));
+            document.getElementById(id).addEventListener('input', () => renderQR(3));
         });
         ['g2User', 'g2Pass'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => renderHarborQR(2));
+            document.getElementById(id).addEventListener('input', () => renderQR(2));
         });
     </script>
 </body>
