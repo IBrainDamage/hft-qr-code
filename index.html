@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HFT Pure Letter QR Studio</title>
+    <title>Harbor Freight Credential QR Studio</title>
     <!-- Reliable Offline QR Encoder -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <style>
@@ -11,20 +11,20 @@
         body { background-color: #f1f5f9; color: #0f172a; padding: 16px; }
         .container { max-width: 480px; margin: 0 auto; }
         
-        .header { background: #0f172a; color: white; padding: 16px; border-radius: 12px; margin-bottom: 16px; text-align: center; }
-        .header h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
-        .header p { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+        .header { background: #cc2027; color: white; padding: 16px; border-radius: 12px; margin-bottom: 16px; text-align: center; }
+        .header h1 { font-size: 18px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+        .header p { font-size: 12px; color: #fecaca; margin-top: 2px; }
 
         .tab-bar { display: flex; background: #e2e8f0; border-radius: 10px; padding: 4px; margin-bottom: 16px; }
         .tab-btn { flex: 1; padding: 12px 8px; text-align: center; border: none; background: transparent; font-weight: 700; cursor: pointer; border-radius: 8px; color: #64748b; font-size: 13px; transition: all 0.15s ease; }
-        .tab-btn.active { background: #ffffff; color: #2563eb; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .tab-btn.active { background: #ffffff; color: #cc2027; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
         .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
         
         .field { margin-bottom: 14px; }
         .field label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #475569; margin-bottom: 4px; }
         .field input { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; }
-        .field input:focus { border-color: #2563eb; }
+        .field input:focus { border-color: #cc2027; }
 
         .info-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 11px; color: #64748b; }
         .clear-btn { background: none; border: none; color: #ef4444; font-size: 12px; font-weight: 600; cursor: pointer; }
@@ -42,12 +42,12 @@
         }
         canvas {
             display: block;
-            max-width: 280px;
+            max-width: 300px;
             height: auto;
             border-radius: 4px;
         }
         
-        .action-btn { width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; }
+        .action-btn { width: 100%; padding: 12px; background: #cc2027; color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; }
         .action-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
     </style>
 </head>
@@ -55,8 +55,8 @@
 
     <div class="container">
         <div class="header">
-            <h1>HFT Letter QR Studio</h1>
-            <p>Pure HFT Silhouette Generator</p>
+            <h1>Harbor Freight QR Studio</h1>
+            <p>Stacked Logo Matrix Carved Generator</p>
         </div>
 
         <div class="tab-bar">
@@ -87,12 +87,12 @@
 
             <div class="card" style="text-align: center;">
                 <div class="qr-wrapper">
-                    <div id="ph3" class="qr-placeholder">Enter credentials above to generate HFT letter QR</div>
+                    <div id="ph3" class="qr-placeholder">Enter credentials above to generate Harbor Freight QR</div>
                     <div id="box3" class="canvas-container" style="display: none;">
                         <canvas id="canvas3"></canvas>
                     </div>
                 </div>
-                <button type="button" id="btnDl3" class="action-btn" disabled onclick="downloadCanvas('canvas3', 'HFT_3Subject_PureLetter.png')">Download HFT Letter QR</button>
+                <button type="button" id="btnDl3" class="action-btn" disabled onclick="downloadCanvas('canvas3', 'HarborFreight_3Subject_QR.png')">Download 3-Subject QR</button>
             </div>
         </div>
 
@@ -115,12 +115,12 @@
 
             <div class="card" style="text-align: center;">
                 <div class="qr-wrapper">
-                    <div id="ph2" class="qr-placeholder">Enter credentials above to generate HFT letter QR</div>
+                    <div id="ph2" class="qr-placeholder">Enter credentials above to generate Harbor Freight QR</div>
                     <div id="box2" class="canvas-container" style="display: none;">
                         <canvas id="canvas2"></canvas>
                     </div>
                 </div>
-                <button type="button" id="btnDl2" class="action-btn" disabled onclick="downloadCanvas('canvas2', 'HFT_2Subject_PureLetter.png')">Download HFT Letter QR</button>
+                <button type="button" id="btnDl2" class="action-btn" disabled onclick="downloadCanvas('canvas2', 'HarborFreight_2Subject_QR.png')">Download 2-Subject QR</button>
             </div>
         </div>
     </div>
@@ -137,17 +137,17 @@
                 sec2.style.display = 'none';
                 btn3.classList.add('active');
                 btn2.classList.remove('active');
-                renderLetterQR(3);
+                renderHarborQR(3);
             } else {
                 sec3.style.display = 'none';
                 sec2.style.display = 'block';
                 btn3.classList.remove('active');
                 btn2.classList.add('active');
-                renderLetterQR(2);
+                renderHarborQR(2);
             }
         }
 
-        function renderLetterQR(mode) {
+        function renderHarborQR(mode) {
             const ph = document.getElementById(mode === 3 ? 'ph3' : 'ph2');
             const box = document.getElementById(mode === 3 ? 'box3' : 'box2');
             const targetCanvas = document.getElementById(mode === 3 ? 'canvas3' : 'canvas2');
@@ -178,9 +178,9 @@
             }
 
             try {
-                const size = 360;
+                const size = 380;
 
-                // 1. Generate full square base QR on an offscreen canvas
+                // 1. Generate full square base QR with red theme (#CC2027)
                 let tempCanvas = document.createElement('canvas');
                 tempCanvas.width = size;
                 tempCanvas.height = size;
@@ -189,51 +189,52 @@
                     element: tempCanvas,
                     value: payload,
                     size: size,
-                    level: 'H', // High error correction so scanner reads through the letter cutout shape
-                    foreground: '#0f172a',
+                    level: 'H',
+                    foreground: '#cc2027',
                     background: '#ffffff'
                 });
 
                 let tCtx = tempCanvas.getContext('2d', { willReadFrequently: true });
                 let qrData = tCtx.getImageData(0, 0, size, size);
 
-                // 2. Create the exact letter silhouette mask for "HFT"
+                // 2. Build stacked 2-line "HARBOR FREIGHT" mask
                 let maskCanvas = document.createElement('canvas');
                 maskCanvas.width = size;
                 maskCanvas.height = size;
                 let mCtx = maskCanvas.getContext('2d');
                 
-                mCtx.fillStyle = '#000000'; // Black background (outside letters)
+                mCtx.fillStyle = '#000000';
                 mCtx.fillRect(0, 0, size, size);
                 
-                // Draw bold "HFT" text in white in the exact center
                 mCtx.fillStyle = '#ffffff';
-                mCtx.font = '900 135px sans-serif';
+                mCtx.font = '900 48px Impact, "Arial Black", sans-serif';
                 mCtx.textAlign = 'center';
                 mCtx.textBaseline = 'middle';
-                mCtx.fillText('HFT', size / 2, size / 2);
+                
+                // Draw stacked words matching logo layout
+                mCtx.fillText('HARBOR', size / 2, (size / 2) - 28);[cite: 3]
+                mCtx.fillText('FREIGHT', size / 2, (size / 2) + 28);[cite: 3]
 
                 let maskData = mCtx.getImageData(0, 0, size, size).data;
 
-                // 3. Completely strip everything outside the HFT letters
+                // 3. Mask QR matrix pixels into letter shapes
                 let finalPixels = tCtx.createImageData(size, size);
                 let fPx = finalPixels.data;
 
                 for (let i = 0; i < qrData.data.length; i += 4) {
-                    // Only keep pixels that are strictly inside the white HFT letter mask
                     if (maskData[i] > 128) {
                         fPx[i]     = qrData.data[i];     // R
                         fPx[i + 1] = qrData.data[i + 1]; // G
                         fPx[i + 2] = qrData.data[i + 2]; // B
-                        fPx[i + 3] = qrData.data[i + 3]; // Alpha from QR
+                        fPx[i + 3] = qrData.data[i + 3]; // Alpha
                     } else {
-                        fPx[i + 3] = 0;                  // Make completely transparent outside HFT
+                        fPx[i + 3] = 0;                  // Transparent outside letters
                     }
                 }
 
                 tCtx.putImageData(finalPixels, 0, 0);
 
-                // 4. Auto-crop the canvas tightly to the exact bounding box of the letters "HFT"
+                // 4. Auto-crop tightly around letter bounding box
                 let currentPixels = tCtx.getImageData(0, 0, size, size);
                 let pData = currentPixels.data;
                 let minX = size, minY = size, maxX = 0, maxY = 0;
@@ -250,7 +251,7 @@
                     }
                 }
 
-                let pad = 10;
+                let pad = 12;
                 minX = Math.max(0, minX - pad);
                 minY = Math.max(0, minY - pad);
                 maxX = Math.min(size, maxX + pad);
@@ -263,7 +264,6 @@
                 targetCanvas.height = cropHeight;
                 let targetCtx = targetCanvas.getContext('2d');
 
-                // Solid white background fill so scanners can read the contrast correctly inside the letters
                 targetCtx.fillStyle = '#ffffff';
                 targetCtx.fillRect(0, 0, cropWidth, cropHeight);
                 targetCtx.drawImage(tempCanvas, minX, minY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
@@ -272,7 +272,7 @@
                 box.style.display = 'inline-block';
                 dlBtn.disabled = false;
             } catch (err) {
-                console.error("Letter QR generation error:", err);
+                console.error("Harbor Freight QR rendering error:", err);
             }
         }
 
@@ -281,11 +281,11 @@
                 document.getElementById('g3Store').value = '';
                 document.getElementById('g3User').value = '';
                 document.getElementById('g3Pass').value = '';
-                renderLetterQR(3);
+                renderHarborQR(3);
             } else {
                 document.getElementById('g2User').value = '';
                 document.getElementById('g2Pass').value = '';
-                renderLetterQR(2);
+                renderHarborQR(2);
             }
         }
 
@@ -299,10 +299,10 @@
 
         // Live input listeners for both tabs
         ['g3Store', 'g3User', 'g3Pass'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => renderLetterQR(3));
+            document.getElementById(id).addEventListener('input', () => renderHarborQR(3));
         });
         ['g2User', 'g2Pass'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => renderLetterQR(2));
+            document.getElementById(id).addEventListener('input', () => renderHarborQR(2));
         });
     </script>
 </body>
