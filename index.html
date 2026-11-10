@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HFT Credential QR Studio</title>
-    <!-- Reliable Offline QR Encoder -->
+    <title>HFT Credential Studio (Manhattan POS)</title>
+    <!-- Reliable Offline QR Encoder & 1D Barcode Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.6/JsBarcode.all.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: #f1f5f9; color: #0f172a; padding: 16px; }
@@ -35,15 +36,15 @@
         .canvas-container {
             display: inline-block;
             background: #ffffff;
-            padding: 8px;
+            padding: 12px;
             border-radius: 8px;
             border: 1px solid #cbd5e1;
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
         canvas {
             display: block;
-            width: 260px;
-            height: 260px;
+            max-width: 320px;
+            height: auto;
             border-radius: 4px;
         }
         
@@ -55,32 +56,32 @@
 
     <div class="container">
         <div class="header">
-            <h1>HFT Credential QR Studio</h1>
-            <p>Standard QR with Centered HFT Badge</p>
+            <h1>HFT Credential Studio</h1>
+            <p>Secure Zero-Retention Mode</p>
         </div>
 
         <div class="tab-bar">
-            <button type="button" id="btn3" class="tab-btn active" onclick="switchMode(3)">3-Subject (Store/User/Pass)</button>
-            <button type="button" id="btn2" class="tab-btn" onclick="switchMode(2)">2-Subject (User/Pass)</button>
+            <button type="button" id="btn3" class="tab-btn active" onclick="switchMode(3)">3-Subject (QR Code)</button>
+            <button type="button" id="btn2" class="tab-btn" onclick="switchMode(2)">2-Subject (Code 128)</button>
         </div>
 
-        <!-- 3-SUBJECT GENERATOR -->
+        <!-- 3-SUBJECT GENERATOR (QR) -->
         <div id="section3" style="display: block;">
             <div class="card">
                 <div class="field">
                     <label>Store #</label>
-                    <input type="text" id="g3Store" placeholder="e.g. 1042">
+                    <input type="text" id="g3Store" placeholder="e.g. 1042" autocomplete="off" autocapitalize="off" spellcheck="false">
                 </div>
                 <div class="field">
                     <label>Username</label>
-                    <input type="text" id="g3User" placeholder="e.g. jdoe">
+                    <input type="text" id="g3User" placeholder="e.g. jdoe" autocomplete="off" autocapitalize="off" spellcheck="false">
                 </div>
                 <div class="field">
                     <label>Password</label>
-                    <input type="password" id="g3Pass" placeholder="Enter password">
+                    <input type="password" id="g3Pass" placeholder="Enter password" autocomplete="new-password" spellcheck="false">
                 </div>
                 <div class="info-row">
-                    <span>Delimiter: <b>Store \t User \t Pass</b></span>
+                    <span>Format: <b>Store \t User \t Pass</b></span>
                     <button type="button" class="clear-btn" onclick="resetForm(3)">Clear All</button>
                 </div>
             </div>
@@ -96,36 +97,42 @@
             </div>
         </div>
 
-        <!-- 2-SUBJECT GENERATOR -->
+        <!-- 2-SUBJECT GENERATOR (CODE 128 BARCODE) -->
         <div id="section2" style="display: none;">
             <div class="card">
                 <div class="field">
                     <label>Username / Employee #</label>
-                    <input type="text" id="g2User" placeholder="e.g. jdoe">
+                    <input type="text" id="g2User" placeholder="e.g. jdoe" autocomplete="off" autocapitalize="off" spellcheck="false">
                 </div>
                 <div class="field">
                     <label>Password</label>
-                    <input type="password" id="g2Pass" placeholder="Enter password">
+                    <input type="password" id="g2Pass" placeholder="Enter password" autocomplete="new-password" spellcheck="false">
                 </div>
                 <div class="info-row">
-                    <span>Delimiter: <b>User \t Pass</b></span>
+                    <span>Action: <b>Auto-Enter (Carriage Return)</b></span>
                     <button type="button" class="clear-btn" onclick="resetForm(2)">Clear All</button>
                 </div>
             </div>
 
             <div class="card" style="text-align: center;">
                 <div class="qr-wrapper">
-                    <div id="ph2" class="qr-placeholder">Enter credentials above to generate QR code</div>
+                    <div id="ph2" class="qr-placeholder">Enter credentials above to generate Code 128 barcode</div>
                     <div id="box2" class="canvas-container" style="display: none;">
-                        <canvas id="canvas2" width="280" height="280"></canvas>
+                        <canvas id="canvas2"></canvas>
                     </div>
                 </div>
-                <button type="button" id="btnDl2" class="action-btn" disabled onclick="downloadCanvas('canvas2', 'HFT_2Subject_QR.png')">Download 2-Subject QR</button>
+                <button type="button" id="btnDl2" class="action-btn" disabled onclick="downloadCanvas('canvas2', 'HFT_2Subject_Barcode.png')">Download Code 128 Barcode</button>
             </div>
         </div>
     </div>
 
     <script>
+        // Automatically wipe all inputs and credentials when the page is closed or hidden
+        window.addEventListener('pagehide', () => {
+            resetForm(3);
+            resetForm(2);
+        });
+
         function switchMode(mode) {
             const sec3 = document.getElementById('section3');
             const sec2 = document.getElementById('section2');
@@ -137,55 +144,42 @@
                 sec2.style.display = 'none';
                 btn3.classList.add('active');
                 btn2.classList.remove('active');
-                renderQR(3);
+                renderQR();
             } else {
                 sec3.style.display = 'none';
                 sec2.style.display = 'block';
                 btn3.classList.remove('active');
                 btn2.classList.add('active');
-                renderQR(2);
+                renderBarcode();
             }
         }
 
-        function renderQR(mode) {
-            const ph = document.getElementById(mode === 3 ? 'ph3' : 'ph2');
-            const box = document.getElementById(mode === 3 ? 'box3' : 'box2');
-            const targetCanvas = document.getElementById(mode === 3 ? 'canvas3' : 'canvas2');
-            const dlBtn = document.getElementById(mode === 3 ? 'btnDl3' : 'btnDl2');
+        function renderQR() {
+            const store = document.getElementById('g3Store').value.trim();
+            const user = document.getElementById('g3User').value.trim();
+            const pass = document.getElementById('g3Pass').value;
+            
+            const ph = document.getElementById('ph3');
+            const box = document.getElementById('box3');
+            const canvas = document.getElementById('canvas3');
+            const dlBtn = document.getElementById('btnDl3');
 
-            let payload = "";
-            if (mode === 3) {
-                const store = document.getElementById('g3Store').value.trim();
-                const user = document.getElementById('g3User').value.trim();
-                const pass = document.getElementById('g3Pass').value;
-                if (!store && !user && !pass) {
-                    ph.style.display = 'block';
-                    box.style.display = 'none';
-                    dlBtn.disabled = true;
-                    return;
-                }
-                payload = store + '\t' + user + '\t' + pass;
-            } else {
-                const user = document.getElementById('g2User').value.trim();
-                const pass = document.getElementById('g2Pass').value;
-                if (!user && !pass) {
-                    ph.style.display = 'block';
-                    box.style.display = 'none';
-                    dlBtn.disabled = true;
-                    return;
-                }
-                // Explicitly concatenating user + tab + pass for terminal scanning
-                payload = user + '\t' + pass;
+            if (!store && !user && !pass) {
+                ph.style.display = 'block';
+                box.style.display = 'none';
+                dlBtn.disabled = true;
+                return;
             }
+
+            const payload = store + '\t' + user + '\t' + pass;
 
             try {
                 const size = 280;
-                targetCanvas.width = size;
-                targetCanvas.height = size;
+                canvas.width = size;
+                canvas.height = size;
 
-                // 1. Generate standard square QR code with Level 'H' error correction
                 const qr = new QRious({
-                    element: targetCanvas,
+                    element: canvas,
                     value: payload,
                     size: size,
                     level: 'H',
@@ -193,21 +187,17 @@
                     background: '#ffffff'
                 });
 
-                const ctx = targetCanvas.getContext('2d');
-
-                // 2. Draw a clean white backing box in the center
+                const ctx = canvas.getContext('2d');
                 const boxSize = 72;
                 const boxX = (size - boxSize) / 2;
                 const boxY = (size - boxSize) / 2;
 
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(boxX - 4, boxY - 4, boxSize + 8, boxSize + 8);
-
                 ctx.strokeStyle = '#cbd5e1';
                 ctx.lineWidth = 2;
                 ctx.strokeRect(boxX - 4, boxY - 4, boxSize + 8, boxSize + 8);
 
-                // 3. Render "HFT" text inside the center badge
                 ctx.fillStyle = '#0f172a';
                 ctx.font = '900 24px sans-serif';
                 ctx.textAlign = 'center';
@@ -222,16 +212,55 @@
             }
         }
 
+        function renderBarcode() {
+            const user = document.getElementById('g2User').value.trim();
+            const pass = document.getElementById('g2Pass').value;
+            
+            const ph = document.getElementById('ph2');
+            const box = document.getElementById('box2');
+            const canvas = document.getElementById('canvas2');
+            const dlBtn = document.getElementById('btnDl2');
+
+            if (!user && !pass) {
+                ph.style.display = 'block';
+                box.style.display = 'none';
+                dlBtn.disabled = true;
+                return;
+            }
+
+            const payload = user + '\r' + pass;
+
+            try {
+                JsBarcode(canvas, payload, {
+                    format: "CODE128",
+                    lineColor: "#0f172a",
+                    background: "#ffffff",
+                    width: 2.2,
+                    height: 90,
+                    displayValue: true,
+                    text: user + " (Login Barcode)",
+                    fontSize: 13,
+                    margin: 10
+                });
+
+                ph.style.display = 'none';
+                box.style.display = 'inline-block';
+                dlBtn.disabled = false;
+            } catch (err) {
+                console.error("Barcode generation error:", err);
+            }
+        }
+
         function resetForm(mode) {
             if (mode === 3) {
                 document.getElementById('g3Store').value = '';
                 document.getElementById('g3User').value = '';
                 document.getElementById('g3Pass').value = '';
-                renderQR(3);
+                renderQR();
             } else {
                 document.getElementById('g2User').value = '';
                 document.getElementById('g2Pass').value = '';
-                renderQR(2);
+                renderBarcode();
             }
         }
 
@@ -243,12 +272,12 @@
             a.click();
         }
 
-        // Live input listeners for both tabs
+        // Live input listeners
         ['g3Store', 'g3User', 'g3Pass'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => renderQR(3));
+            document.getElementById(id).addEventListener('input', renderQR);
         });
         ['g2User', 'g2Pass'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => renderQR(2));
+            document.getElementById(id).addEventListener('input', renderBarcode);
         });
     </script>
 </body>
