@@ -30,20 +30,24 @@
         .info-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 11px; color: #64748b; }
         .clear-btn { background: none; border: none; color: #ef4444; font-size: 12px; font-weight: 600; cursor: pointer; }
 
-        .qr-wrapper { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; min-height: 240px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 16px 0; padding: 16px; }
-        .qr-placeholder { font-size: 12px; color: #94a3b8; text-align: center; }
+        .qr-wrapper { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 12px 0; padding: 14px; }
+        .qr-placeholder { font-size: 12px; color: #94a3b8; text-align: center; padding: 20px; }
+        .barcode-label { font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 4px; align-self: flex-start; }
         
         .canvas-container {
             display: inline-block;
             background: #ffffff;
-            padding: 12px;
+            padding: 8px;
             border-radius: 8px;
             border: 1px solid #cbd5e1;
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            margin-bottom: 8px;
+            width: 100%;
+            text-align: center;
         }
         canvas {
-            display: block;
-            max-width: 320px;
+            display: inline-block;
+            max-width: 100%;
             height: auto;
             border-radius: 4px;
         }
@@ -57,12 +61,12 @@
     <div class="container">
         <div class="header">
             <h1>HFT Credential Studio</h1>
-            <p>Secure Zero-Retention Mode</p>
+            <p>Manhattan POS Dual-Barcode Mode</p>
         </div>
 
         <div class="tab-bar">
             <button type="button" id="btn3" class="tab-btn active" onclick="switchMode(3)">3-Subject (QR Code)</button>
-            <button type="button" id="btn2" class="tab-btn" onclick="switchMode(2)">2-Subject (Code 128)</button>
+            <button type="button" id="btn2" class="tab-btn" onclick="switchMode(2)">2-Subject (Dual Barcodes)</button>
         </div>
 
         <!-- 3-SUBJECT GENERATOR (QR) -->
@@ -97,7 +101,7 @@
             </div>
         </div>
 
-        <!-- 2-SUBJECT GENERATOR (CODE 128 BARCODE) -->
+        <!-- 2-SUBJECT GENERATOR (DUAL CODE 128 BARCODES) -->
         <div id="section2" style="display: none;">
             <div class="card">
                 <div class="field">
@@ -109,25 +113,31 @@
                     <input type="password" id="g2Pass" placeholder="Enter password" autocomplete="new-password" spellcheck="false">
                 </div>
                 <div class="info-row">
-                    <span>Action: <b>Auto-Enter (Carriage Return)</b></span>
+                    <span>Workflow: <b>Scan User Barcode, then Pass Barcode</b></span>
                     <button type="button" class="clear-btn" onclick="resetForm(2)">Clear All</button>
                 </div>
             </div>
 
             <div class="card" style="text-align: center;">
                 <div class="qr-wrapper">
-                    <div id="ph2" class="qr-placeholder">Enter credentials above to generate Code 128 barcode</div>
-                    <div id="box2" class="canvas-container" style="display: none;">
-                        <canvas id="canvas2"></canvas>
+                    <div id="ph2" class="qr-placeholder">Enter credentials above to generate login barcodes</div>
+                    
+                    <div id="box2User" class="canvas-container" style="display: none;">
+                        <div class="barcode-label">1. USERNAME BARCODE</div>
+                        <canvas id="canvas2User"></canvas>
+                    </div>
+
+                    <div id="box2Pass" class="canvas-container" style="display: none;">
+                        <div class="barcode-label">2. PASSWORD BARCODE</div>
+                        <canvas id="canvas2Pass"></canvas>
                     </div>
                 </div>
-                <button type="button" id="btnDl2" class="action-btn" disabled onclick="downloadCanvas('canvas2', 'HFT_2Subject_Barcode.png')">Download Code 128 Barcode</button>
+                <button type="button" id="btnDl2" class="action-btn" disabled onclick="downloadBothBarcodes()">Download Both Barcodes</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Automatically wipe all inputs and credentials when the page is closed or hidden
         window.addEventListener('pagehide', () => {
             resetForm(3);
             resetForm(2);
@@ -150,7 +160,7 @@
                 sec2.style.display = 'block';
                 btn3.classList.remove('active');
                 btn2.classList.add('active');
-                renderBarcode();
+                renderBarcodes();
             }
         }
 
@@ -212,39 +222,55 @@
             }
         }
 
-        function renderBarcode() {
+        function renderBarcodes() {
             const user = document.getElementById('g2User').value.trim();
             const pass = document.getElementById('g2Pass').value;
             
             const ph = document.getElementById('ph2');
-            const box = document.getElementById('box2');
-            const canvas = document.getElementById('canvas2');
+            const boxUser = document.getElementById('box2User');
+            const boxPass = document.getElementById('box2Pass');
+            const canvasUser = document.getElementById('canvas2User');
+            const canvasPass = document.getElementById('canvas2Pass');
             const dlBtn = document.getElementById('btnDl2');
 
             if (!user && !pass) {
                 ph.style.display = 'block';
-                box.style.display = 'none';
+                boxUser.style.display = 'none';
+                boxPass.style.display = 'none';
                 dlBtn.disabled = true;
                 return;
             }
 
-            const payload = user + '\r' + pass;
-
             try {
-                JsBarcode(canvas, payload, {
+                // Generate separate username barcode
+                JsBarcode(canvasUser, user, {
                     format: "CODE128",
                     lineColor: "#0f172a",
                     background: "#ffffff",
-                    width: 2.2,
-                    height: 90,
+                    width: 2.0,
+                    height: 70,
                     displayValue: true,
-                    text: user + " (Login Barcode)",
-                    fontSize: 13,
-                    margin: 10
+                    text: "User: " + user,
+                    fontSize: 12,
+                    margin: 8
+                });
+
+                // Generate separate password barcode
+                JsBarcode(canvasPass, pass, {
+                    format: "CODE128",
+                    lineColor: "#0f172a",
+                    background: "#ffffff",
+                    width: 2.0,
+                    height: 70,
+                    displayValue: true,
+                    text: "Password",
+                    fontSize: 12,
+                    margin: 8
                 });
 
                 ph.style.display = 'none';
-                box.style.display = 'inline-block';
+                boxUser.style.display = 'block';
+                boxPass.style.display = 'block';
                 dlBtn.disabled = false;
             } catch (err) {
                 console.error("Barcode generation error:", err);
@@ -260,7 +286,7 @@
             } else {
                 document.getElementById('g2User').value = '';
                 document.getElementById('g2Pass').value = '';
-                renderBarcode();
+                renderBarcodes();
             }
         }
 
@@ -272,12 +298,19 @@
             a.click();
         }
 
+        function downloadBothBarcodes() {
+            downloadCanvas('canvas2User', 'HFT_Username_Barcode.png');
+            setTimeout(() => {
+                downloadCanvas('canvas2Pass', 'HFT_Password_Barcode.png');
+            }, 300);
+        }
+
         // Live input listeners
         ['g3Store', 'g3User', 'g3Pass'].forEach(id => {
             document.getElementById(id).addEventListener('input', renderQR);
         });
         ['g2User', 'g2Pass'].forEach(id => {
-            document.getElementById(id).addEventListener('input', renderBarcode);
+            document.getElementById(id).addEventListener('input', renderBarcodes);
         });
     </script>
 </body>
