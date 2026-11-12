@@ -61,7 +61,7 @@
     <div class="container">
         <div class="header">
             <h1>HFT Credential Studio</h1>
-            <p>Manhattan POS Dual-Barcode Mode</p>
+            <p>Manhattan POS Auto-Submit Mode</p>
         </div>
 
         <div class="tab-bar">
@@ -113,14 +113,14 @@
                     <input type="password" id="g2Pass" placeholder="Enter password" autocomplete="new-password" spellcheck="false">
                 </div>
                 <div class="info-row">
-                    <span>Workflow: <b>Scan User Barcode, then Pass Barcode</b></span>
+                    <span>Workflow: <b>Scan User, then Pass (Auto-Enters)</b></span>
                     <button type="button" class="clear-btn" onclick="resetForm(2)">Clear All</button>
                 </div>
             </div>
 
             <div class="card" style="text-align: center;">
                 <div class="qr-wrapper">
-                    <div id="ph2" class="qr-placeholder">Enter credentials above to generate login barcodes</div>
+                    <div id="ph2" class="qr-placeholder">Enter credentials above to generate auto-submit barcodes</div>
                     
                     <div id="box2User" class="canvas-container" style="display: none;">
                         <div class="barcode-label">1. USERNAME BARCODE</div>
@@ -128,7 +128,7 @@
                     </div>
 
                     <div id="box2Pass" class="canvas-container" style="display: none;">
-                        <div class="barcode-label">2. PASSWORD BARCODE</div>
+                        <div class="barcode-label">2. PASSWORD BARCODE (Auto-Submits)</div>
                         <canvas id="canvas2Pass"></canvas>
                     </div>
                 </div>
@@ -241,8 +241,10 @@
                 return;
             }
 
+            // Append carriage return (\r) to password so it automatically triggers enter/submit
+            const passPayload = pass + '\r';
+
             try {
-                // Generate separate username barcode
                 JsBarcode(canvasUser, user, {
                     format: "CODE128",
                     lineColor: "#0f172a",
@@ -255,15 +257,14 @@
                     margin: 8
                 });
 
-                // Generate separate password barcode
-                JsBarcode(canvasPass, pass, {
+                JsBarcode(canvasPass, passPayload, {
                     format: "CODE128",
                     lineColor: "#0f172a",
                     background: "#ffffff",
                     width: 2.0,
                     height: 70,
                     displayValue: true,
-                    text: "Password",
+                    text: "Password (Auto-Submit)",
                     fontSize: 12,
                     margin: 8
                 });
