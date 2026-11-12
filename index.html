@@ -10,7 +10,6 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         
-        /* Navy Blue background with fixed top/bottom red trim bars */
         body { 
             background-color: #0f172a; 
             color: #f8fafc; 
@@ -58,17 +57,18 @@
         .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); }
         
         .field { margin-bottom: 14px; }
-        .field label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #cbd5e1; margin-bottom: 4px; }
+        /* High contrast bright label text */
+        .field label { display: block; font-size: 12px; font-weight: 800; text-transform: uppercase; color: #ffffff; margin-bottom: 6px; letter-spacing: 0.5px; }
         .field input { width: 100%; padding: 10px 12px; background: #0f172a; border: 1px solid #475569; color: #ffffff; border-radius: 8px; font-size: 14px; outline: none; }
         .field input:focus { border-color: #cc2027; }
 
-        .info-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 11px; color: #94a3b8; }
+        .info-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 11px; color: #cbd5e1; }
         .clear-btn { background: none; border: none; color: #f87171; font-size: 12px; font-weight: 600; cursor: pointer; }
         .clear-btn:hover { color: #ef4444; text-decoration: underline; }
 
         .qr-wrapper { background: #0f172a; border: 2px dashed #475569; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 12px 0; padding: 14px; }
         .qr-placeholder { font-size: 12px; color: #94a3b8; text-align: center; padding: 20px; }
-        .barcode-label { font-size: 12px; font-weight: 700; color: #cbd5e1; margin-bottom: 4px; align-self: flex-start; }
+        .barcode-label { font-size: 12px; font-weight: 700; color: #ffffff; margin-bottom: 6px; align-self: flex-start; }
         
         .canvas-container {
             display: inline-block;
@@ -90,4 +90,265 @@
         
         .action-btn { width: 100%; padding: 12px; background: #cc2027; color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; transition: background 0.15s ease; }
         .action-btn:hover:not(:disabled) { background: #b91c1c; }
-        .action-btn:disabled { background: #3341
+        .action-btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>HFT Credential Studio</h1>
+            <p>Manhattan POS Auto-Submit Mode</p>
+        </div>
+
+        <div class="tab-bar">
+            <button type="button" id="btn3" class="tab-btn active" onclick="switchMode(3)">3-Subject (QR Code)</button>
+            <button type="button" id="btn2" class="tab-btn" onclick="switchMode(2)">2-Subject (Dual Barcodes)</button>
+        </div>
+
+        <!-- 3-SUBJECT GENERATOR (QR) -->
+        <div id="section3" style="display: block;">
+            <div class="card">
+                <div class="field">
+                    <label>Store #</label>
+                    <input type="text" id="g3Store" placeholder="e.g. 1042" autocomplete="off" autocapitalize="off" spellcheck="false">
+                </div>
+                <div class="field">
+                    <label>Username</label>
+                    <input type="text" id="g3User" placeholder="e.g. jdoe" autocomplete="off" autocapitalize="off" spellcheck="false">
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <input type="password" id="g3Pass" placeholder="Enter password" autocomplete="new-password" spellcheck="false">
+                </div>
+                <div class="info-row">
+                    <span>Format: <b style="color: #ffffff;">Store \t User \t Pass</b></span>
+                    <button type="button" class="clear-btn" onclick="resetForm(3)">Clear All</button>
+                </div>
+            </div>
+
+            <div class="card" style="text-align: center;">
+                <div class="qr-wrapper">
+                    <div id="ph3" class="qr-placeholder">Enter credentials above to generate QR code</div>
+                    <div id="box3" class="canvas-container" style="display: none;">
+                        <canvas id="canvas3" width="280" height="280"></canvas>
+                    </div>
+                </div>
+                <button type="button" id="btnDl3" class="action-btn" disabled onclick="downloadCanvas('canvas3', 'HFT_3Subject_QR.png')">Download 3-Subject QR</button>
+            </div>
+        </div>
+
+        <!-- 2-SUBJECT GENERATOR (DUAL CODE 128 BARCODES) -->
+        <div id="section2" style="display: none;">
+            <div class="card">
+                <div class="field">
+                    <label>Username / Employee #</label>
+                    <input type="text" id="g2User" placeholder="e.g. jdoe" autocomplete="off" autocapitalize="off" spellcheck="false">
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <input type="password" id="g2Pass" placeholder="Enter password" autocomplete="new-password" spellcheck="false">
+                </div>
+                <div class="info-row">
+                    <span>Workflow: <b style="color: #ffffff;">Scan User, then Pass (Auto-Enters)</b></span>
+                    <button type="button" class="clear-btn" onclick="resetForm(2)">Clear All</button>
+                </div>
+            </div>
+
+            <div class="card" style="text-align: center;">
+                <div class="qr-wrapper">
+                    <div id="ph2" class="qr-placeholder">Enter credentials above to generate auto-submit barcodes</div>
+                    
+                    <div id="box2User" class="canvas-container" style="display: none;">
+                        <div class="barcode-label">1. USERNAME BARCODE</div>
+                        <canvas id="canvas2User"></canvas>
+                    </div>
+
+                    <div id="box2Pass" class="canvas-container" style="display: none;">
+                        <div class="barcode-label">2. PASSWORD BARCODE (Auto-Submits)</div>
+                        <canvas id="canvas2Pass"></canvas>
+                    </div>
+                </div>
+                <button type="button" id="btnDl2" class="action-btn" disabled onclick="downloadBothBarcodes()">Download Both Barcodes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('pagehide', () => {
+            resetForm(3);
+            resetForm(2);
+        });
+
+        function switchMode(mode) {
+            const sec3 = document.getElementById('section3');
+            const sec2 = document.getElementById('section2');
+            const btn3 = document.getElementById('btn3');
+            const btn2 = document.getElementById('btn2');
+
+            if (mode === 3) {
+                sec3.style.display = 'block';
+                sec2.style.display = 'none';
+                btn3.classList.add('active');
+                btn2.classList.remove('active');
+                renderQR();
+            } else {
+                sec3.style.display = 'none';
+                sec2.style.display = 'block';
+                btn3.classList.remove('active');
+                btn2.classList.add('active');
+                renderBarcodes();
+            }
+        }
+
+        function renderQR() {
+            const store = document.getElementById('g3Store').value.trim();
+            const user = document.getElementById('g3User').value.trim();
+            const pass = document.getElementById('g3Pass').value;
+            
+            const ph = document.getElementById('ph3');
+            const box = document.getElementById('box3');
+            const canvas = document.getElementById('canvas3');
+            const dlBtn = document.getElementById('btnDl3');
+
+            if (!store && !user && !pass) {
+                ph.style.display = 'block';
+                box.style.display = 'none';
+                dlBtn.disabled = true;
+                return;
+            }
+
+            const payload = store + '\t' + user + '\t' + pass;
+
+            try {
+                const size = 280;
+                canvas.width = size;
+                canvas.height = size;
+
+                const qr = new QRious({
+                    element: canvas,
+                    value: payload,
+                    size: size,
+                    level: 'H',
+                    foreground: '#0f172a',
+                    background: '#ffffff'
+                });
+
+                const ctx = canvas.getContext('2d');
+                const boxSize = 72;
+                const boxX = (size - boxSize) / 2;
+                const boxY = (size - boxSize) / 2;
+
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(boxX - 4, boxY - 4, boxSize + 8, boxSize + 8);
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(boxX - 4, boxY - 4, boxSize + 8, boxSize + 8);
+
+                ctx.fillStyle = '#0f172a';
+                ctx.font = '900 24px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('HFT', size / 2, size / 2);
+
+                ph.style.display = 'none';
+                box.style.display = 'inline-block';
+                dlBtn.disabled = false;
+            } catch (err) {
+                console.error("QR generation error:", err);
+            }
+        }
+
+        function renderBarcodes() {
+            const user = document.getElementById('g2User').value.trim();
+            const pass = document.getElementById('g2Pass').value;
+            
+            const ph = document.getElementById('ph2');
+            const boxUser = document.getElementById('box2User');
+            const boxPass = document.getElementById('box2Pass');
+            const canvasUser = document.getElementById('canvas2User');
+            const canvasPass = document.getElementById('canvas2Pass');
+            const dlBtn = document.getElementById('btnDl2');
+
+            if (!user && !pass) {
+                ph.style.display = 'block';
+                boxUser.style.display = 'none';
+                boxPass.style.display = 'none';
+                dlBtn.disabled = true;
+                return;
+            }
+
+            const passPayload = pass + '\r';
+
+            try {
+                JsBarcode(canvasUser, user, {
+                    format: "CODE128",
+                    lineColor: "#0f172a",
+                    background: "#ffffff",
+                    width: 2.0,
+                    height: 70,
+                    displayValue: true,
+                    text: "User: " + user,
+                    fontSize: 12,
+                    margin: 8
+                });
+
+                JsBarcode(canvasPass, passPayload, {
+                    format: "CODE128",
+                    lineColor: "#0f172a",
+                    background: "#ffffff",
+                    width: 2.0,
+                    height: 70,
+                    displayValue: true,
+                    text: "Password (Auto-Submit)",
+                    fontSize: 12,
+                    margin: 8
+                });
+
+                ph.style.display = 'none';
+                boxUser.style.display = 'block';
+                boxPass.style.display = 'block';
+                dlBtn.disabled = false;
+            } catch (err) {
+                console.error("Barcode generation error:", err);
+            }
+        }
+
+        function resetForm(mode) {
+            if (mode === 3) {
+                document.getElementById('g3Store').value = '';
+                document.getElementById('g3User').value = '';
+                document.getElementById('g3Pass').value = '';
+                renderQR();
+            } else {
+                document.getElementById('g2User').value = '';
+                document.getElementById('g2Pass').value = '';
+                renderBarcodes();
+            }
+        }
+
+        function downloadCanvas(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const a = document.createElement('a');
+            a.href = canvas.toDataURL('image/png');
+            a.download = filename;
+            a.click();
+        }
+
+        function downloadBothBarcodes() {
+            downloadCanvas('canvas2User', 'HFT_Username_Barcode.png');
+            setTimeout(() => {
+                downloadCanvas('canvas2Pass', 'HFT_Password_Barcode.png');
+            }, 300);
+        }
+
+        // Live input listeners
+        ['g3Store', 'g3User', 'g3Pass'].forEach(id => {
+            document.getElementById(id).addEventListener('input', renderQR);
+        });
+        ['g2User', 'g2Pass'].forEach(id => {
+            document.getElementById(id).addEventListener('input', renderBarcodes);
+        });
+    </script>
+</body>
+</html>
